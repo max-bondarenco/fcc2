@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const apiRoutes = require("./routes/api.js");
 const fccTestingRoutes = require("./routes/fcctesting.js");
-const errorHandler = require("../utils/errorHandler");
+const errorHandler = require("./utils/errorHandler");
 
 let app = express();
 
@@ -20,7 +20,7 @@ app.route("/").get(function (req, res) {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
-app.use("/api/issues/", apiRoutes);
+app.use("/api/issues/:project", apiRoutes);
 fccTestingRoutes(app);
 
 app.use(function (req, res, next) {

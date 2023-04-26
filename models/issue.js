@@ -2,11 +2,25 @@ const mongoose = require("mongoose");
 
 const issueSchema = new mongoose.Schema(
   {
+    assigned_to: {
+      type: String,
+    },
+    status_text: {
+      type: String,
+    },
+    open: {
+      type: Boolean,
+      default: true,
+    },
     issue_title: {
       type: String,
       required: true,
     },
     issue_text: {
+      type: String,
+      required: true,
+    },
+    created_by: {
       type: String,
       required: true,
     },
@@ -17,19 +31,9 @@ const issueSchema = new mongoose.Schema(
     updated_on: {
       type: Date,
     },
-    created_by: {
+    project: {
       type: String,
-      required: true,
-    },
-    assigned_to: {
-      type: String,
-    },
-    open: {
-      type: Boolean,
-      default: true,
-    },
-    status_text: {
-      type: String,
+      select: false,
     },
   },
   { timestamps: true }
@@ -37,6 +41,10 @@ const issueSchema = new mongoose.Schema(
 
 issueSchema.pre("save", function () {
   this.updated_on = Date.now();
+});
+
+issueSchema.pre("find", function () {
+  this.select("-__v");
 });
 
 module.exports = mongoose.model("Issue", issueSchema);

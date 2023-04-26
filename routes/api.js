@@ -4,7 +4,7 @@ const router = express.Router();
 const issuesController = require("../controllers/issues");
 
 router
-  .route(":project/")
+  .route("/")
   .get(issuesController.get)
   .post(issuesController.create)
   .put(issuesController.update)
