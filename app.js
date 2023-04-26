@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const apiRoutes = require("./routes/api.js");
 const fccTestingRoutes = require("./routes/fcctesting.js");
+const errorHandler = require("../utils/errorHandler");
 
 let app = express();
 
@@ -25,5 +26,7 @@ fccTestingRoutes(app);
 app.use(function (req, res, next) {
   res.status(404).type("text").send("Not Found");
 });
+
+app.use(errorHandler);
 
 module.exports = app;
