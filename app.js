@@ -19,8 +19,8 @@ app.route("/").get(function (req, res) {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
+app.use("/api/issues/", apiRoutes);
 fccTestingRoutes(app);
-apiRoutes(app);
 
 app.use(function (req, res, next) {
   res.status(404).type("text").send("Not Found");
