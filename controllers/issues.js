@@ -23,43 +23,51 @@ exports.create = catchAsync(async (req, res, next) => {
 exports.delete = catchAsync(async (req, res, next) => {
   if (!req.body._id) return next(new AppError(400, "missing _id"));
 
-  try {
-    await Issue.findByIdAndDelete(req.body._id);
+  const issue = await Issue.findByIdAndDelete(req.body._id);
 
+  if (!issue)
     return res.status(200).json({
-      result: "successfully deleted",
-      _id: req.body._id,
-    });
-  } catch (err) {
-    res.status(400).json({
       error: "could not delete",
       _id: req.body._id,
     });
-  }
+
+  res.status(200).json({
+    result: "successfully deleted",
+    _id: req.body._id,
+  });
 });
 
 exports.update = catchAsync(async (req, res, next) => {
   if (!req.body._id) return next(new AppError(400, "missing _id"));
+  let updated = false;
 
-  if (Object.keys(req.body).length === 1)
-    return res.status(400).json({
+  const issue = await Issue.findById(req.body._id);
+
+  console.log(req.body);
+
+  if (!issue)
+    return res.status(200).json({
+      error: "could not update",
+      _id: req.body._id,
+    });
+
+  Object.keys(req.body).forEach((field) => {
+    if (field !== "_id" && req.body[field] !== "") {
+      issue[field] = req.body[field];
+      updated = true;
+    }
+  });
+
+  if (!updated)
+    return res.status(200).json({
       error: "no update field(s) sent",
       _id: req.body._id,
     });
 
-  try {
-    const issue = await Issue.findById(req.body._id);
-    await issue.updateOne(req.body, { runValidators: true });
-    await issue.save();
+  await issue.save();
 
-    return res.status(200).json({
-      result: "successfully updated",
-      _id: req.body._id,
-    });
-  } catch (err) {
-    res.status(400).json({
-      error: "could not update",
-      _id: req.body._id,
-    });
-  }
+  res.status(200).json({
+    result: "successfully updated",
+    _id: req.body._id,
+  });
 });
